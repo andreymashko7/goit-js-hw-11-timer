@@ -13,3 +13,8 @@ body {
     Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif,
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 }
+
+.timer {
+  text-align: center;
+  font-size: 26px;
+}

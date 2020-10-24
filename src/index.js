@@ -1,45 +1,59 @@
 import '../src/styles.css';
-import colors from './js/colors';
 
-const refs ={
-    startBtn: document.querySelector('button[data-action="start"]'),
-    stopBtn: document.querySelector('button[data-action="stop"]'),
-    body: document.querySelector('body')
+const refs = {
+  daysEl: document.querySelector('span[data-value="days"]'),
+  hoursEl: document.querySelector('span[data-value="hours"]'),
+  minsEl: document.querySelector('span[data-value="mins"]'),
+  secsEl: document.querySelector('span[data-value="secs"]'),
 }
 
-let timerId = null;//  переменная для значения интервала
+class CountdownTimer {
+  constructor({ targetDate, onTick } = {}) {
+      this.targetDate = targetDate;
+      this.onTick = onTick;
 
-refs.startBtn.addEventListener('click',btnStartClick );
-refs.stopBtn.addEventListener('click', btnStopClick);
-
-//ф-я по кнопке старт , запускает интервал .
-
-function btnStartClick() { 
-   timerId = setInterval(() => {
-       bodyColorChange();
-   }, 1000);
+    this.init();
+    }
     
-    refs.startBtn.disabled = true;
-}
+    init() {
+        setInterval(() => {
+     const currentTime = Date.now();
+      const deltaTime = this.targetDate - currentTime;
+        const time = this.getTimeComponents(deltaTime);
+             
+      this.onTick(time);
+    }, 1000);
+  }
 
-// ф-я останавливает интервал, делает кнопку старт не активной
+     getTimeComponents(time) {
+    const days = this.pad(Math.floor(time / (1000 * 60 * 60 * 24)));
+    const hours = this.pad(
+      Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+    );
+    const mins = this.pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
+    const secs = this.pad(Math.floor((time % (1000 * 60)) / 1000));
 
-function btnStopClick() {
-    clearInterval(timerId);
-    refs.startBtn.disabled = false;
+    return { days, hours, mins, secs };
+    }
     
-}
-// меняет цвета на боди
-function bodyColorChange() {
- refs.body.style.backgroundColor = colors[randomIntegerFromInterval(0, colors.length - 1)];
-}
-// генерируем случайный цвет для боди
+     pad(value) {
+    return String(value).padStart(2, '0');
+  }
+     }
+    
+function  updateClockface({ days, hours, mins, secs }) {
+    refs.daysEl.textContent = `${days}`;
+    refs.hoursEl.textContent = `${hours}`;
+    refs.minsEl.textContent = `${mins}`;
+    refs.secsEl.textContent = `${secs}`;
+  }
 
-const randomIntegerFromInterval = (min, max) => {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-};
+const timer= new CountdownTimer({
+   selector: '#timer-1',
+   targetDate: new Date("Nov  27, 2020"),
+    onTick: updateClockface,
+});
 
-
-
+ 
 
 
